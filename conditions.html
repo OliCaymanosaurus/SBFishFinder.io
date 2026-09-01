@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>Santa Barbara Conditions</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    .conditions-page {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+    }
+
+    .conditions-header {
+      margin-bottom: 2rem;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1.5rem;
+      color: var(--teal-500);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .conditions-header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.3rem, 6vw, 4rem);
+      font-weight: 500;
+      margin: 0 0 0.75rem;
+    }
+
+    .conditions-header p {
+      color: var(--ink-soft);
+      max-width: 55ch;
+    }
+
+    .station-controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+      margin: 2rem 0;
+    }
+
+    .station-controls label {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--ink-soft);
+    }
+
+    #station-select {
+      font: inherit;
+      padding: 0.75rem 2rem 0.75rem 0.9rem;
+      border: 1px solid var(--sand-200);
+      border-radius: 8px;
+      background: white;
+    }
+
+    #refresh-conditions {
+      border: 0;
+      border-radius: 999px;
+      background: var(--coral-500);
+      color: white;
+      font: inherit;
+      font-weight: 600;
+      padding: 0.75rem 1.25rem;
+      cursor: pointer;
+    }
+
+    #conditions-status {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--ink-soft);
+    }
+
+    .current-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+
+    .metric {
+      background: white;
+      border: 1px solid var(--sand-200);
+      border-radius: var(--radius);
+      padding: 1rem;
+    }
+
+    .metric-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--ink-soft);
+      text-transform: uppercase;
+    }
+
+    .metric-value {
+      font-family: var(--font-display);
+      font-size: 1.65rem;
+      margin-top: 0.35rem;
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .chart-card {
+      background: white;
+      border: 1px solid var(--sand-200);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+    }
+
+    .chart-card h2 {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 500;
+      margin: 0 0 1rem;
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 280px;
+    }
+
+    @media (max-width: 750px) {
+      .current-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .chart-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 450px) {
+      .current-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="conditions-page">
+
+    <header class="conditions-header">
+
+      <a class="back-link" href="index.html">
+        ← Bite forecast
+      </a>
+
+      <h1>Coastal conditions</h1>
+
+      <p>
+        Current and recent pressure, tide, wind, water temperature,
+        and wave conditions for Santa Barbara fishing spots.
+      </p>
+
+    </header>
+
+    <section class="station-controls">
+
+      <label for="station-select">
+        LOCATION
+      </label>
+
+      <select id="station-select">
+        <option value="goleta_pier">
+          Goleta Pier
+        </option>
+
+        <option value="stearns_wharf">
+          Stearns Wharf
+        </option>
+
+        <option value="arroyo_burro_beach">
+          Hendry's Beach
+        </option>
+
+        <option value="haskells_beach">
+          Haskell's Beach
+        </option>
+      </select>
+
+      <button id="refresh-conditions">
+        Refresh
+      </button>
+
+      <span id="conditions-status">
+        Waiting...
+      </span>
+
+    </section>
+
+    <section class="current-grid">
+
+      <article class="metric">
+        <div class="metric-label">
+          Barometer
+        </div>
+        <div id="current-pressure" class="metric-value">
+          —
+        </div>
+      </article>
+
+      <article class="metric">
+        <div class="metric-label">
+          Wind
+        </div>
+        <div id="current-wind" class="metric-value">
+          —
+        </div>
+      </article>
+
+      <article class="metric">
+        <div class="metric-label">
+          Water temp
+        </div>
+        <div id="current-water" class="metric-value">
+          —
+        </div>
+      </article>
+
+      <article class="metric">
+        <div class="metric-label">
+          Waves
+        </div>
+        <div id="current-wave" class="metric-value">
+          —
+        </div>
+      </article>
+
+      <article class="metric">
+        <div class="metric-label">
+          Tide
+        </div>
+        <div id="current-tide" class="metric-value">
+          —
+        </div>
+      </article>
+
+      <article class="metric">
+        <div class="metric-label">
+          Tide direction
+        </div>
+        <div id="current-tide-direction" class="metric-value">
+          —
+        </div>
+      </article>
+
+      <article class="metric">
+        <div class="metric-label">
+          Wind direction
+        </div>
+        <div id="current-wind-direction" class="metric-value">
+          —
+        </div>
+      </article>
+
+      <article class="metric">
+        <div class="metric-label">
+          Updated
+        </div>
+        <div id="updated-time" class="metric-value">
+          —
+        </div>
+      </article>
+
+    </section>
+
+    <section class="chart-grid">
+
+      <article class="chart-card">
+        <h2>Barometer · 48 hours</h2>
+        <div class="chart-wrap">
+          <canvas id="pressure-chart"></canvas>
+        </div>
+      </article>
+
+      <article class="chart-card">
+        <h2>Tide · today + tomorrow</h2>
+        <div class="chart-wrap">
+          <canvas id="tide-chart"></canvas>
+        </div>
+      </article>
+
+      <article class="chart-card">
+        <h2>Wind · 48 hours</h2>
+        <div class="chart-wrap">
+          <canvas id="wind-chart"></canvas>
+        </div>
+      </article>
+
+      <article class="chart-card">
+        <h2>Water temperature</h2>
+        <div class="chart-wrap">
+          <canvas id="water-chart"></canvas>
+        </div>
+      </article>
+
+      <article class="chart-card">
+        <h2>Wave height</h2>
+        <div class="chart-wrap">
+          <canvas id="wave-chart"></canvas>
+        </div>
+      </article>
+
+    </section>
+
+  </main>
+
+  <script src="conditions.js"></script>
+
+</body>
+</html>

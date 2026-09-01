@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Santa Barbara Bite Forecast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <p class="kicker">Goleta Pier &middot; Stearns Wharf &middot; Haskell&rsquo;s Beach &middot; Arroyo Burro</p>
+      <h1>Is it biting?</h1>
+      <p class="lede">
+        Live pressure, tide, and sea-temp data for the Santa Barbara coast,
+        turned into a ranked list of the next 48 hours &mdash; where to fish,
+        what to rig, and what&rsquo;s likely running.
+      </p>
+      <button id="check-btn" type="button">Check the bite</button>
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+      <a class="dashboard-link" href="conditions.html">
+        Live conditions dashboard →
+      </a>
+    </div>
+    <svg class="horizon" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0,40 C 240,10 480,70 720,40 C 960,10 1200,70 1440,40 L1440,80 L0,80 Z" />
+    </svg>
+  </header>
+  
+  <main>
+    <section id="results" class="results" hidden>
+      <h2>Top windows, next 48 hours</h2>
+      <p id="pressure-note" class="pressure-note"></p>
+      <div class="location-filter">
+        <label for="location-select">Show:</label>
+        <select id="location-select">
+          <option value="all">All locations</option>
+          <option value="goleta_pier">Goleta Pier</option>
+          <option value="stearns_wharf">Stearns Wharf</option>
+          <option value="arroyo_burro_beach">Hendry's Beach</option>
+          <option value="haskells_beach">Haskell's Beach</option>
+        </select>
+      </div> 
+
+  <a class="conditions-link" href="conditions.html">
+    View live conditions →
+  </a>
+</div>
+      <div id="results-list" class="results-list"></div>
+    </section>
+
+    <section id="error" class="error-panel" hidden></section>
+
+    <section class="playbook">
+      <h2>Species guide</h2>
+      <p class="playbook-sub">General strategy for each species &mdash; not a guarantee, a starting point.</p>
+      <div id="playbook-list" class="playbook-list"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      Data: National Weather Service, NOAA Tides &amp; Currents, and Open-Meteo (forecast &amp; marine).
+      No CA fishing license is required from a qualifying public pier; surf/beach fishing does require one for anglers 16+.
+      Size, bag, and report-card rules apply everywhere &mdash; check current CDFW regulations.
+    </p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
